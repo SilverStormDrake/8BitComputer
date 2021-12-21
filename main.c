@@ -5,9 +5,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define TRUE  1
 #define FALSE 0
+//This is a way to print binary numbers that i found on StackOverflow by user William Whyte
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
 
 /*  
 *   This function seems useles, but its just to emulate a real clock.
@@ -212,6 +224,36 @@ void alu(int* reg1, int* reg2, int* bus, int sum, int sub)
     }
 }
 
+
+//Memory Functions
+void writeMemory(int *ram, int *bus, int address)
+{
+    int binaryToStore = 0;
+    printf("writeMemory()    ");
+
+    for(int i = 7; i>0; i--)
+    {
+        binaryToStore += (bus[i]*(pow((7-i),2)));//Technically this is a cheat, but it works really well
+        printf("%i ", binaryToStore);//Debuggin
+    }
+    
+    ram[address] = binaryToStore;
+}
+
+void readMemory(int *ram, int *bus, int address)
+{
+    int numberToConvert = ram[address];
+    int result[8]={0b0};
+    printf("| readMemory()");
+    for(int i=0; numberToConvert>0;i++)
+    {
+        result[i] =numberToConvert%2;
+        numberToConvert = numberToConvert/2;
+        printf("%i ", result[i]);//Debuggin
+    }
+    loadToBus(&result, bus);
+}
+
 int main()
 {
     int on = TRUE;
@@ -223,16 +265,19 @@ int main()
     *   In the video theres a huge discussion about the registers and the bus
     *   But i will just use some arrays for the emulator
     */
-    int registerA[8]           = {0b0 , 0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b1};
+    int registerA[8]           = {0b1 , 0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b1};
     int registerB[8]           = {0b0 , 0b0 , 0b0, 0b0, 0b0, 0b0, 0b1, 0b1};
     int bus[8]                 = {0b0};
     int instructionRegister[8] = {0b0}; //This is a special register that will be used later
+    int ram[16]                = {0b0};
 
     while(on==1)//Computer Loop
     {
         //Commands
         clockCycle(&clock);
-        alu(&registerA, &registerB, &bus, FALSE, TRUE);
+        loadToBus(&registerA, &bus);
+        writeMemory(&ram, &bus, 0);
+        readMemory(&ram, &bus, 0);
 
 
         //Visualization of the computer
@@ -263,6 +308,15 @@ int main()
             printf("%i ",bus[i]);
 
             if(i == 7)
+            {
+                printf("\n");
+            }
+        }
+        printf("\nRAM\n");
+        for(int i = 0; i<16; i++)
+        {
+            printf(" "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(ram[i]));
+            if(i == 15)
             {
                 printf("\n");
             }
