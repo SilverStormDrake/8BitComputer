@@ -37,7 +37,7 @@ void clockCycle(int* ptr)//Clock
 */
 void loadToBus(int* reg, int* bus)
 {
-    for(int i  = 0; i<8; i++)
+    for(int i = 0; i<8; i++)
     {
         bus[i] = reg[i];
     }
@@ -228,28 +228,34 @@ void alu(int* reg1, int* reg2, int* bus, int sum, int sub)
 //Memory Functions
 void writeMemory(int *ram, int *bus, int address)
 {
-    int binaryToStore = 0;
-    printf("writeMemory()    ");
-
-    for(int i = 7; i>0; i--)
+    int temp = 0, decimal = 0, base = 1, remainder;
+    for(int i = 0; i<8; i++)
     {
-        binaryToStore += (bus[i]*(pow((7-i),2)));//Technically this is a cheat, but it works really well
-        printf("%i ", binaryToStore);//Debuggin
+        temp += bus[i];
+        if(i !=7)
+        {
+            temp *= 10;
+        }
     }
-    
-    ram[address] = binaryToStore;
+    while(temp>0)
+    {
+        remainder = temp%10;
+        decimal += (remainder * base);
+        temp = temp/10;
+        base *= 2;
+    }
+    ram[address] = decimal;
 }
 
 void readMemory(int *ram, int *bus, int address)
 {
     int numberToConvert = ram[address];
     int result[8]={0b0};
-    printf("| readMemory()");
+
     for(int i=0; numberToConvert>0;i++)
     {
         result[i] =numberToConvert%2;
         numberToConvert = numberToConvert/2;
-        printf("%i ", result[i]);//Debuggin
     }
     loadToBus(&result, bus);
 }
@@ -265,9 +271,9 @@ int main()
     *   In the video theres a huge discussion about the registers and the bus
     *   But i will just use some arrays for the emulator
     */
-    int registerA[8]           = {0b1 , 0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b1};
-    int registerB[8]           = {0b0 , 0b0 , 0b0, 0b0, 0b0, 0b0, 0b1, 0b1};
-    int bus[8]                 = {0b0};
+    int registerA[8]           = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b1, 0b1, 0b1};
+    int registerB[8]           = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b1, 0b1};
+    int bus[8]                 = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b0, 0b0};
     int instructionRegister[8] = {0b0}; //This is a special register that will be used later
     int ram[16]                = {0b0};
 
@@ -275,9 +281,10 @@ int main()
     {
         //Commands
         clockCycle(&clock);
+        //alu(&registerA, &registerB, &bus, TRUE, FALSE);
         loadToBus(&registerA, &bus);
         writeMemory(&ram, &bus, 0);
-        readMemory(&ram, &bus, 0);
+        //readMemory(&ram, &bus, 0);
 
 
         //Visualization of the computer
@@ -315,7 +322,9 @@ int main()
         printf("\nRAM\n");
         for(int i = 0; i<16; i++)
         {
+            printf("| %i -", ram[i]);
             printf(" "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(ram[i]));
+            printf(" ");
             if(i == 15)
             {
                 printf("\n");
