@@ -3,12 +3,21 @@
 *   Made by: André Luiz(andrelu00) 
 */
 
+/*
+*   TODO:
+*   A lot of warnings and an error in ram.h
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include "bus.h"
+#include "cpu.h"
+#include "alu.h"
+#include "ram.h"
 
 #define TRUE  1
 #define FALSE 0
+
 //This is a way to print binary numbers that i found on StackOverflow by user William Whyte
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -21,244 +30,6 @@
   (byte & 0x02 ? '1' : '0'), \
   (byte & 0x01 ? '1' : '0') 
 
-/*  
-*   This function seems useles, but its just to emulate a real clock.
-*   In other complex systems it might be convenient to track the clock cycle. 
-*/
-void clockCycle(int* ptr)//Clock
-{
-    (*ptr)++;
-}
-
-/*  Bus Transfers
-*   This functions are pratically the same and you can pass both registers as parameters, but in real hardware doenst work like that
-*   reg: register you want send data
-*   bus: system bus
-*/
-void loadToBus(int* reg, int* bus)
-{
-    for(int i = 0; i<8; i++)
-    {
-        bus[i] = reg[i];
-    }
-}
-/*  Bus Transfers
-*
-*   This functions are pratically the same and you can pass both registers as parameters, but in real hardware doens't work like that
-*   reg: register you want to load data 
-*   bus: system bus
-*/
-void loadFromBus(int* reg, int* bus)
-{
-    for(int i  = 0; i<8; i++)
-    {
-        reg[i] = bus[i];
-    }
-}
-//  Just to clear the Bus after some data transfer
-void clearBus(int* bus)
-{
-    for(int i = 0; i<8; i++)
-    {
-        bus[i] = 0b0;
-    }
-}
-
-/*             Arithmetic Logic Unit
-* 
-*  reg1, reg2: registers that will be use in the operations
-*  bus: where the output will be transfered
-*  sum, sub: which operation will be performed, sum or subtraction
-*/
-void alu(int* reg1, int* reg2, int* bus, int sum, int sub) 
-{
-    int result[8] = {0b0}; //Suport array for operations
-    int carry = 0b0; //This is to simulate the carry bit in some eletronics
-    
-    if(sum == TRUE && sub == FALSE)// If we are adding the registers
-    {
-        for(int i = 7; i>0; i--)
-        {
-            result[i] = reg1[i]+ reg2[i] + carry;
-
-            switch (carry)
-            {
-            case 0:
-                if(reg1[i] == 1 && reg2[i] == 1)
-                {
-                    result[i] = 0b0;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 1 && reg2[i] == 0)
-                {
-                    result[i] = 0b1;
-                    carry = 0b0;
-                }
-                if(reg1[i] == 0 && reg2[i] == 1)
-                {
-                    result[i] = 0b1;
-                    carry = 0b0;
-                }
-                if(reg1[i] == 0 && reg2[i] == 0)
-                {
-                    result[i] = 0b0;
-                    carry = 0b0;
-                }
-                break;
-            case 1:
-                if(reg1[i] == 1 && reg2[i] == 1)
-                {
-                    result[i] = 0b1;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 1 && reg2[i] == 0)
-                {
-                    result[i] = 0b0;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 0 && reg2[i] == 1)
-                {
-                    result[i] = 0b0;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 0 && reg2[i] == 0)
-                {
-                    result[i] = 0b1;
-                    carry = 0b0;   
-                }
-                break;
-            }
-        }
-        loadToBus(&result, bus);//Sending the result
-    }
-
-    /*
-    * Subtracting two binary numbers is just a different way to adding them
-    * Throught the 'two complements' we can invert the number, turning them into a neagative number, add 1 and the result will be right
-    * UNLESS you subtract a bigger number than the first one, might rework that later
-    */
-    else if(sum == FALSE && sub == TRUE)// If we are subtracting the registers
-    {
-        int complement = 0b1;
-        for(int i =0; i<8; i++)// Inverting the number
-        {
-            if(reg2[i] == 0b0)
-            {
-                reg2[i] = 0b1;
-            }
-            else if(reg2[i] == 0b1)
-            {
-                reg2[i] = 0b0;
-            }
-        }
-        for(int i = 7; i>0; i--)
-        {
-            result[i] = reg1[i]+ reg2[i] + carry;
-
-            if(i == 7)
-            {
-                result[i] += 1;
-            }
-
-            switch (carry)
-            {
-            case 0:
-                if(reg1[i] == 1 && reg2[i] == 1)
-                {
-                    result[i] = 0b0;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 1 && reg2[i] == 0)
-                {
-                    result[i] = 0b1;
-                    carry = 0b0;
-                }
-                if(reg1[i] == 0 && reg2[i] == 1)
-                {
-                    result[i] = 0b1;
-                    carry = 0b0;
-                }
-                if(reg1[i] == 0 && reg2[i] == 0)
-                {
-                    result[i] = 0b0;
-                    carry = 0b0;
-                }
-                break;
-            case 1:
-                if(reg1[i] == 1 && reg2[i] == 1)
-                {
-                    result[i] = 0b1;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 1 && reg2[i] == 0)
-                {
-                    result[i] = 0b0;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 0 && reg2[i] == 1)
-                {
-                    result[i] = 0b0;
-                    carry = 0b1;
-                }
-                if(reg1[i] == 0 && reg2[i] == 0)
-                {
-                    result[i] = 0b1;
-                    carry = 0b0;   
-                }
-                break;
-            } 
-        }
-
-        for(int i =0; i<8; i++)//Inverting the number back to normal
-        {
-            if(reg2[i] == 0b0)
-            {
-                reg2[i] = 0b1;
-            }
-            else if(reg2[i] == 0b1)
-            {
-                reg2[i] = 0b0;
-            }
-        }
-        loadToBus(&result, bus);//Sending the result
-    }
-}
-
-
-//Memory Functions
-void writeMemory(int *ram, int *bus, int address)
-{
-    int temp = 0, decimal = 0, base = 1, remainder;
-    for(int i = 0; i<8; i++)
-    {
-        temp += bus[i];
-        if(i !=7)
-        {
-            temp *= 10;
-        }
-    }
-    while(temp>0)
-    {
-        remainder = temp%10;
-        decimal += (remainder * base);
-        temp = temp/10;
-        base *= 2;
-    }
-    ram[address] = decimal;
-}
-
-void readMemory(int *ram, int *bus, int address)
-{
-    int numberToConvert = ram[address];
-    int result[8]={0b0};
-
-    for(int i=0; numberToConvert>0;i++)
-    {
-        result[i] =numberToConvert%2;
-        numberToConvert = numberToConvert/2;
-    }
-    loadToBus(&result, bus);
-}
 
 int main()
 {
@@ -281,8 +52,8 @@ int main()
     {
         //Commands
         clockCycle(&clock);
-        //alu(&registerA, &registerB, &bus, TRUE, FALSE);
-        loadToBus(&registerA, &bus);
+        alu(&registerA, &registerB, &bus, TRUE, FALSE);
+        //loadToBus(&registerA, &bus);
         writeMemory(&ram, &bus, 0);
         //readMemory(&ram, &bus, 0);
 
