@@ -5,7 +5,9 @@
 
 /*
 *   TODO:
-*   A lot of warnings and an error in ram.h
+*   A lot of warnings 
+*   An error in ram.h
+*   ALU still doesnt work
 */
 
 #include <stdio.h>
