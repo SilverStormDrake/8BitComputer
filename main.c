@@ -103,18 +103,6 @@ int main()
                 printf("\n");
             }
         }
-
-
-        /*
-        * Just to finish the program through terminal
-        * This is a janky solution, might rework later
-        */
-        scanf(" %i", &turnOff);
-        if(turnOff == FALSE)
-        {
-            on = FALSE;
-        }
-        
     }
 
     return 0;
