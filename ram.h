@@ -1,5 +1,3 @@
-#include "bus.h"
-
 
 //Memory Functions
 void writeMemory(int *ram, int *bus, int address)

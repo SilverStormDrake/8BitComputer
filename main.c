@@ -5,9 +5,7 @@
 
 /*
 *   TODO:
-*   A lot of warnings 
-*   An error in ram.h
-*   ALU still doesnt work
+*   A lot of warnings   
 */
 
 #include <stdio.h>
@@ -45,10 +43,11 @@ int main()
     *   But i will just use some arrays for the emulator
     */
     int registerA[8]           = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b1, 0b1, 0b1};
-    int registerB[8]           = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b1, 0b1};
+    int registerB[8]           = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b0, 0b1};
     int bus[8]                 = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b0, 0b0};
     int instructionRegister[8] = {0b0}; //This is a special register that will be used later
     int ram[16]                = {0b0};
+
 
     while(on==1)//Computer Loop
     {
@@ -103,8 +102,6 @@ int main()
                 printf("\n");
             }
         }
-
-
         /*
         * Just to finish the program through terminal
         * This is a janky solution, might rework later
@@ -114,7 +111,6 @@ int main()
         {
             on = FALSE;
         }
-        
     }
 
     return 0;
