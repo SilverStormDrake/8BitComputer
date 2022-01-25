@@ -47,10 +47,14 @@ int main()
     int bus[8]                 = {0b0 , 0b0, 0b0, 0b0, 0b0, 0b0, 0b0, 0b0};
     int instructionRegister[8] = {0b0}; //This is a special register that will be used later
     int ram[16]                = {0b0};
-
+    int programcounter         = 0;
 
     while(on==1)//Computer Loop
     {
+        if(programcounter > 16){
+            programcounter = 0;
+        }
+
         //Commands
         clockCycle(&clock);
         alu(&registerA, &registerB, &bus, TRUE, FALSE);
@@ -102,15 +106,16 @@ int main()
                 printf("\n");
             }
         }
+        printf("\nProgram Counter\n%i\n", programcounter);
         /*
         * Just to finish the program through terminal
         * This is a janky solution, might rework later
         */
         scanf(" %i", &turnOff);
-        if(turnOff == FALSE)
-        {
+        if(turnOff == FALSE){
             on = FALSE;
         }
+        programcounter ++; //Tecnically the Program counter should not go up every cicle, doing this to keep things simple
     }
 
     return 0;
