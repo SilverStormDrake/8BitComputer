@@ -57,7 +57,7 @@ void alu(int* reg1, int* reg2, int* bus, int sum, int sub) {
                 break;
             }
         }
-        loadToBus(&result, bus);//Sending the result
+        loadToBus(result, bus);//Sending the result
     }
 
     /*
@@ -130,6 +130,6 @@ void alu(int* reg1, int* reg2, int* bus, int sum, int sub) {
                 reg2[i] = 0b0;
             }
         }
-        loadToBus(&result, bus);//Sending the result
+        loadToBus(result, bus);//Sending the result
     }
 }

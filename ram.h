@@ -32,5 +32,5 @@ void readMemory(int *ram, int *bus, int address)
         numberToConvert = numberToConvert/2;
     }
     //TODO: Sometimes error on this function
-    loadToBus(&result, bus);
+    loadToBus(result, bus);
 }
