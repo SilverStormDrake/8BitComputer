@@ -3,11 +3,6 @@
 *   Made by: André Luiz(andrelu00) 
 */
 
-/*
-*   TODO:
-*   A lot of warnings   
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "bus.h"
