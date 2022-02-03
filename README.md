@@ -5,6 +5,6 @@ Link: https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU
 
 Made by: André Luiz(andrelu00) 
 
-# VS Code Extensions
+## VS Code Extensions
 
 Using "Better Comments" extension: https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments
