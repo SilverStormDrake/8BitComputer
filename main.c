@@ -55,8 +55,8 @@ void main()
         alu(registerA, registerB, bus, TRUE, FALSE);
         //loadToBus(registerA, bus);
         writeMemory(ram, bus, 0);
-        //readMemory(ram, bus, 0);
-        //loadFromBus(registerA, bus);
+        readMemory(ram, bus, 0);
+        loadFromBus(registerA, bus);
 
         //Visualization of the computer
         printf("\nClock Cycle: %i\n", clock);

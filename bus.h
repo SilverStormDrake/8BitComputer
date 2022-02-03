@@ -1,4 +1,5 @@
-/*  Bus Transfers
+/*  
+*   Bus Transfers
 *   This functions are pratically the same and you can pass both registers as parameters, but in real hardware doenst work like that
 *   reg: register you want send data
 *   bus: system bus
@@ -9,7 +10,8 @@ void loadToBus(int* reg, int* bus){
         bus[i] = reg[i];
     }
 }
-/*  Bus Transfers
+/*  
+*   Bus Transfers
 *
 *   This functions are pratically the same and you can pass both registers as parameters, but in real hardware doens't work like that
 *   reg: register you want to load data 

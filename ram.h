@@ -26,11 +26,11 @@ void readMemory(int *ram, int *bus, int address)
     int numberToConvert = ram[address];
     int result[8]={0b0};
 
-    for(int i=0; numberToConvert>0;i++)
+    for(int i=7; numberToConvert>0;i--)
     {
         result[i] =numberToConvert%2;
         numberToConvert = numberToConvert/2;
     }
-    //TODO: Sometimes error on this function
+
     loadToBus(result, bus);
 }
