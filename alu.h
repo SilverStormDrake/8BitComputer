@@ -64,7 +64,7 @@ void alu(int* reg1, int* reg2, int* bus, int sum, int sub) {
      Subtracting two binary numbers is just a different way to adding them
      Throught the 'two complements' we can invert the number, turning them into a neagative number, add 1 and the result will be right
      UNLESS you subtract a bigger number than the first one, might rework that later
-     TODO: Negative Numbers
+     TODO: Negative Numbers https://github.com/andrelu00/8BitComputer/issues/3
     */
     else if(sum == FALSE && sub == TRUE){// If we are subtracting the registers
         int complement = 0b1;
