@@ -42,7 +42,7 @@ void main()
 {
     int on = TRUE;
     int turnOff;
-    int showTwoComplements = TRUE;
+    int showTwoComplements = FALSE;
 
     int clock = 0;
 
